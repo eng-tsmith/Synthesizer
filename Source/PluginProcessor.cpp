@@ -48,10 +48,20 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
                                                 5000.0f,         // maximum value
                                                 1.0f),           // default value
             std::make_unique<AudioParameterFloat>("wavetype",
-                                                  "WaveType", 
+                                                  "WaveType",
                                                    0.0f,
                                                    2.0f,
                                                    0),
+            std::make_unique<AudioParameterFloat>("cutoff",
+                                                  "CutOff",
+                                                   1.0f,
+                                                   1000.0f,
+                                                   1000),
+            std::make_unique<AudioParameterFloat>("resonance",
+                                                  "Resonance",
+                                                   1.0f,
+                                                   5.0f,
+                                                   1.0f),
         })
 {
     // init Voices
@@ -77,6 +87,8 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
     sustainTimeParameter = parameters.getRawParameterValue("sustain");
     releaseTimeParameter = parameters.getRawParameterValue("release");
     waveTypeParameter = parameters.getRawParameterValue("wavetype");
+    cutOffParameter = parameters.getRawParameterValue("cutoff");
+    resonanceParameter = parameters.getRawParameterValue("resonance");
     //frequencyParameter = parameters.getRawParameterValue("frequency");
 
 }
@@ -229,9 +241,13 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
                              parameters.getRawParameterValue("decay"), 
                              parameters.getRawParameterValue("sustain"), 
                              parameters.getRawParameterValue("release"));
+
            myVoice->setFrequency(myZero.recMsg());
+
            myVoice->setOscType(parameters.getRawParameterValue("wavetype"));
 
+           myVoice->setFilter(parameters.getRawParameterValue("cutoff"),
+                              parameters.getRawParameterValue("resonance"));
         }
     }
 

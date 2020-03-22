@@ -14,6 +14,7 @@
 #include "PluginProcessor.h"
 #include "Oscillator.h"
 #include "Envelope.h"
+#include "LowPass.h"
 
 //==============================================================================
 /**
@@ -36,6 +37,7 @@ private:
 
     Oscillator oscGUI;
     Envelope envGUI;
+    LowPass filterGUI;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessorEditor)
 };

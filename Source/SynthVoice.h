@@ -72,6 +72,14 @@ public:
 
     //==========================================
 
+    void setFilter(std::atomic<float>* cutoff, std::atomic<float>* resonance)
+    {
+        lo_cutoff = double(*cutoff);
+        lo_res = double(*resonance);
+    }
+
+    //==========================================
+
     void startNote(int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition)
     {
         env1.trigger = 1;
@@ -117,12 +125,12 @@ public:
             //env for my wavetable
             double theSound = env1.adsr(getOscType(), 1); // env1.trigger); //TODO *level;
             //filter
-           // TODO double filteredSound = filter1.lores(theSound, 200, 0.1);
+            double filteredSound = filter1.lores(theSound, lo_cutoff, lo_res); // lo_cutoff, lo_res);
 
 
             for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
             {
-                outputBuffer.addSample(channel, startSample, theSound);
+                outputBuffer.addSample(channel, startSample, filteredSound);
             }
             ++startSample;
         }
@@ -134,6 +142,8 @@ private:
     double level;
     double frequency;
     double frequency_zmq;
+    double lo_cutoff;
+    double lo_res;
     int theWave;
     maxiOsc osc1;
     maxiEnv env1;

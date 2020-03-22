@@ -82,5 +82,7 @@ private:
     std::atomic<float>* releaseTimeParameter = nullptr;
     std::atomic<float>* waveTypeParameter = nullptr;
     std::atomic<float>* frequencyParameter = nullptr;
+    std::atomic<float>* cutOffParameter = nullptr;
+    std::atomic<float>* resonanceParameter = nullptr;
 
 };
