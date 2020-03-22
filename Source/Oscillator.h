@@ -26,16 +26,14 @@ public:
     void resized() override;
 
     // In fact, as the names of these classes can become very long, we have included a typedef for each of the attachment classes we need:
-    typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
 private:
     SynthFrameworkAudioProcessor& processor;
     AudioProcessorValueTreeState& valueTreeState;
 
-    std::unique_ptr<ComboBoxAttachment> waveSelection;
-
     ComboBox oscMenu;
+    std::unique_ptr<ComboBoxAttachment> waveSelection;   
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Oscillator)
 };

@@ -33,6 +33,7 @@ Oscillator::~Oscillator()
 
 void Oscillator::paint (Graphics& g)
 {
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 }
 
 void Oscillator::resized()

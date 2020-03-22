@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Oscillator.h"
+#include "Envelope.h"
 
 //==============================================================================
 /**
@@ -27,42 +28,14 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 
-    enum
-    {
-        paramControlHeight = 100,
-        paramLabelWidth = 50,
-        paramSliderWidth = 300
-    };
-
-    // In fact, as the names of these classes can become very long, we have included a typedef for each of the attachment classes we need:
-    typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
-    typedef AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
-
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    //SynthFrameworkAudioProcessor& processor;
 
     AudioProcessorValueTreeState& valueTreeState;
 
     Oscillator oscGUI;
+    Envelope envGUI;
     
-    Label attackLabel;
-    Slider attackSlider;
-    std::unique_ptr<SliderAttachment> attackAttachment;
-
-    Label decayLabel;
-    Slider decaySlider;
-    std::unique_ptr<SliderAttachment> decayAttachment;
-
-    Label sustainLabel;
-    Slider sustainSlider;
-    std::unique_ptr<SliderAttachment> sustainAttachment;
-
-    Label releaseLabel;
-    Slider releaseSlider;
-    std::unique_ptr<SliderAttachment> releaseAttachment;
-
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessorEditor)
 };
