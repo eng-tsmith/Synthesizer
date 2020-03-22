@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "Oscillator.h"
 
 //==============================================================================
 /**
@@ -35,6 +36,7 @@ public:
 
     // In fact, as the names of these classes can become very long, we have included a typedef for each of the attachment classes we need:
     typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    typedef AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -42,6 +44,8 @@ private:
     //SynthFrameworkAudioProcessor& processor;
 
     AudioProcessorValueTreeState& valueTreeState;
+
+    Oscillator oscGUI;
     
     Label attackLabel;
     Slider attackSlider;

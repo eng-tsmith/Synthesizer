@@ -46,12 +46,12 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
                                                 "Release",       // parameter name
                                                 1.0f,            // minimum value
                                                 5000.0f,         // maximum value
-                                                1.0f)/*,            // default value
-            std::make_unique<AudioParameterFloat>("frequency",     // parameterID
-                                                "Frequency",       // parameter name
-                                                27.0f,            // minimum value
-                                                24000,         // maximum value
-                                                440.0f), */           // default value
+                                                1.0f),           // default value
+            std::make_unique<AudioParameterFloat>("wavetype",
+                                                  "WaveType", 
+                                                   0.0f,
+                                                   2.0f,
+                                                   0),
         })
 {
     // init Voices
@@ -76,6 +76,7 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
     decayTimeParameter = parameters.getRawParameterValue("decay");
     sustainTimeParameter = parameters.getRawParameterValue("sustain");
     releaseTimeParameter = parameters.getRawParameterValue("release");
+    waveTypeParameter = parameters.getRawParameterValue("wavetype");
     //frequencyParameter = parameters.getRawParameterValue("frequency");
 
 }
@@ -218,16 +219,19 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     //frequencyParameter = myZero.recMsg();
 
 
-    // read tree params
+    // read tree params and send to myVoice
     for (int i = 0; i < mySynth.getNumVoices(); i++)
     {
         if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
         {
-           myVoice->getParam(parameters.getRawParameterValue("attack"), 
+            //env
+           myVoice->setEnvel(parameters.getRawParameterValue("attack"), 
                              parameters.getRawParameterValue("decay"), 
                              parameters.getRawParameterValue("sustain"), 
-                             parameters.getRawParameterValue("release"),
-                             myZero.recMsg());
+                             parameters.getRawParameterValue("release"));
+           myVoice->setFrequency(myZero.recMsg());
+           myVoice->setOscType(parameters.getRawParameterValue("wavetype"));
+
         }
     }
 

@@ -13,9 +13,11 @@
 
 //==============================================================================
 SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFrameworkAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), 
-    valueTreeState(vts)
+    : AudioProcessorEditor (&p), valueTreeState(vts), oscGUI(p, vts)
 {
+    // osc Type
+    addAndMakeVisible(&oscGUI);
+
     // Attack Slider
     attackLabel.setText("Attack", dontSendNotification);
     addAndMakeVisible(attackLabel);
@@ -73,6 +75,11 @@ void SynthFrameworkAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     auto r = getLocalBounds();
+
+    const int componentWidth = 200;
+    const int componentHeight = 200;
+
+    oscGUI.setBounds(r.removeFromLeft(componentWidth).removeFromTop(componentHeight));
 
     auto attackRect = r.removeFromTop(paramControlHeight);
     attackLabel.setBounds(attackRect.removeFromLeft(paramLabelWidth));

@@ -80,6 +80,7 @@ private:
     std::atomic<float>* decayTimeParameter = nullptr;
     std::atomic<float>* sustainTimeParameter = nullptr;
     std::atomic<float>* releaseTimeParameter = nullptr;
+    std::atomic<float>* waveTypeParameter = nullptr;
     std::atomic<float>* frequencyParameter = nullptr;
 
 };
