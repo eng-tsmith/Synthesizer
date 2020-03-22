@@ -10,6 +10,8 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "zmq_addon.hpp"
+#include "ZeroReceiver.h"
 
 //==============================================================================
 SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
@@ -44,15 +46,25 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
                                                 "Release",       // parameter name
                                                 1.0f,            // minimum value
                                                 5000.0f,         // maximum value
-                                                1.0f)            // default value
+                                                1.0f)/*,            // default value
+            std::make_unique<AudioParameterFloat>("frequency",     // parameterID
+                                                "Frequency",       // parameter name
+                                                27.0f,            // minimum value
+                                                24000,         // maximum value
+                                                440.0f), */           // default value
         })
 {
     // init Voices
     mySynth.clearVoices();
 
+    // Init ZeroMQ
+    myZero.initZero();
+    
     for (int i=0; i<5; i++)
     {
-        mySynth.addVoice(new SynthVoice());
+        auto voice = new SynthVoice();
+        //voice->initVoice();
+        mySynth.addVoice(voice);
     }
 
     // init Sounds
@@ -64,6 +76,7 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
     decayTimeParameter = parameters.getRawParameterValue("decay");
     sustainTimeParameter = parameters.getRawParameterValue("sustain");
     releaseTimeParameter = parameters.getRawParameterValue("release");
+    //frequencyParameter = parameters.getRawParameterValue("frequency");
 
 }
 
@@ -201,7 +214,11 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         // ..do something to the data...
     }
 
-    // tree
+    // update tree with freq
+    //frequencyParameter = myZero.recMsg();
+
+
+    // read tree params
     for (int i = 0; i < mySynth.getNumVoices(); i++)
     {
         if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
@@ -209,11 +226,13 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
            myVoice->getParam(parameters.getRawParameterValue("attack"), 
                              parameters.getRawParameterValue("decay"), 
                              parameters.getRawParameterValue("sustain"), 
-                             parameters.getRawParameterValue("release"));
+                             parameters.getRawParameterValue("release"),
+                             myZero.recMsg());
         }
     }
 
     buffer.clear();
+
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 }
 

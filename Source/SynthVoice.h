@@ -18,6 +18,11 @@ class SynthVoice : public SynthesiserVoice
 {
 public:
 
+    //void initVoice()
+    //{
+    //    myZero.initZero();
+    //}
+
     bool canPlaySound(SynthesiserSound* sound)
     {
         return dynamic_cast<SynthSound*>(sound) != nullptr;
@@ -25,12 +30,18 @@ public:
 
     //==========================================
 
-    void getParam (std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
+    void getParam (std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release, double frequency)
     {
         env1.setAttack(double(*attack));
         env1.setDecay(double(*decay));
         env1.setSustain(double(*sustain));
         env1.setRelease(double(*release));
+        frequency_zmq = frequency;
+    }
+
+    void setFreqMQ(double freq)
+    {
+        frequency_zmq = freq;
     }
         
 
@@ -75,13 +86,13 @@ public:
 
     void renderNextBlock(AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
     {
-
+       
         for (int sample = 0; sample < numSamples; ++sample)
         {
             // wave table
-            double theWave = osc1.sinewave(frequency);
+            double theWave = osc1.sinewave(frequency_zmq);  // myZero.recMsg()
             //env for my wavetable
-            double theSound = env1.adsr(theWave, env1.trigger); //TODO *level;
+            double theSound = env1.adsr(theWave, 1);// env1.trigger); //TODO *level;
             //filter
             double filteredSound = filter1.lores(theSound, 200, 0.1);
 
@@ -99,7 +110,10 @@ public:
 private:
     double level;
     double frequency;
+    double frequency_zmq;
     maxiOsc osc1;
     maxiEnv env1;
     maxiFilter filter1;
+    //ZeroReceiver myZero;
+
 };

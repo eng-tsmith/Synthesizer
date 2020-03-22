@@ -13,6 +13,9 @@
 #include <JuceHeader.h>
 #include "SynthSound.h"
 #include "SynthVoice.h"
+#include "zmq_addon.hpp"
+#include "ZeroReceiver.h"
+
 
 //==============================================================================
 /**
@@ -70,10 +73,13 @@ private:
     SynthVoice* myVoice;
     double lastSampleRate;
 
+    ZeroReceiver myZero;
+
     AudioProcessorValueTreeState parameters;
     std::atomic<float>* attackTimeParameter = nullptr;
     std::atomic<float>* decayTimeParameter = nullptr;
     std::atomic<float>* sustainTimeParameter = nullptr;
     std::atomic<float>* releaseTimeParameter = nullptr;
+    std::atomic<float>* frequencyParameter = nullptr;
 
 };
