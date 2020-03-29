@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    Oscillator.h
-    Created: 22 Mar 2020 4:28:45pm
+    Filter.h
+    Created: 28 Mar 2020 1:27:14pm
     Author:  timmy
 
   ==============================================================================
@@ -16,11 +16,11 @@
 //==============================================================================
 /*
 */
-class Oscillator    : public Component
+class Filter    : public Component
 {
 public:
-    Oscillator(SynthFrameworkAudioProcessor&, AudioProcessorValueTreeState&);
-    ~Oscillator();
+    Filter(SynthFrameworkAudioProcessor&, AudioProcessorValueTreeState&);
+    ~Filter();
 
     void paint (Graphics&) override;
     void resized() override;
@@ -33,13 +33,19 @@ private:
     SynthFrameworkAudioProcessor& processor;
     AudioProcessorValueTreeState& valueTreeState;
 
-    ComboBox oscMenu;
-    std::unique_ptr<ComboBoxAttachment> waveSelection;   
+    // Type
+    ComboBox filterMenu;
+    std::unique_ptr<ComboBoxAttachment> filterSelection;
 
-    // level
-    Label levelLabel;
-    Slider levelSlider;
-    std::unique_ptr<SliderAttachment> levelSliderAttachment;
+    // Cut off
+    Label cutOffLabel;
+    Slider cutOffSlider;
+    std::unique_ptr<SliderAttachment> cutOffAttachment;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Oscillator)
+    // Resonance
+    Label resonanceLabel;
+    Slider resonanceSlider;
+    std::unique_ptr<SliderAttachment> resonanceAttachment;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Filter)
 };

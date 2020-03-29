@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    LowPass.h
-    Created: 22 Mar 2020 7:28:46pm
+    Lfo.h
+    Created: 29 Mar 2020 11:20:21am
     Author:  timmy
 
   ==============================================================================
@@ -16,29 +16,31 @@
 //==============================================================================
 /*
 */
-class LowPass    : public Component
+class Lfo    : public Component
 {
 public:
-    LowPass(SynthFrameworkAudioProcessor&, AudioProcessorValueTreeState&);
-    ~LowPass();
+    Lfo(SynthFrameworkAudioProcessor&, AudioProcessorValueTreeState&);
+    ~Lfo();
 
     void paint (Graphics&) override;
     void resized() override;
 
     // In fact, as the names of these classes can become very long, we have included a typedef for each of the attachment classes we need:
     typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    typedef AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
 private:
     SynthFrameworkAudioProcessor& processor;
     AudioProcessorValueTreeState& valueTreeState;
 
-    Label cutOffLabel;
-    Slider cutOffSlider;
-    std::unique_ptr<SliderAttachment> cutOffAttachment;
+    // Type
+    ComboBox lfomenu;
+    std::unique_ptr<ComboBoxAttachment> lfoSelection;
 
-    Label resonanceLabel;
-    Slider resonanceSlider;
-    std::unique_ptr<SliderAttachment> resonanceAttachment;
+    // lfo freq
+    Label lfoLabel;
+    Slider lfoSlider;
+    std::unique_ptr<SliderAttachment> lfoSliderAttachment;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LowPass)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Lfo)
 };

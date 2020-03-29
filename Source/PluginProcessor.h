@@ -76,13 +76,20 @@ private:
     ZeroReceiver myZero;
 
     AudioProcessorValueTreeState parameters;
+    // Env
     std::atomic<float>* attackTimeParameter = nullptr;
     std::atomic<float>* decayTimeParameter = nullptr;
     std::atomic<float>* sustainTimeParameter = nullptr;
     std::atomic<float>* releaseTimeParameter = nullptr;
+    // Osc
     std::atomic<float>* waveTypeParameter = nullptr;
+    std::atomic<float>* levelOSCParameter = nullptr;
     std::atomic<float>* frequencyParameter = nullptr;
+    // Filter
+    std::atomic<float>* filterTypeParameter = nullptr;
     std::atomic<float>* cutOffParameter = nullptr;
     std::atomic<float>* resonanceParameter = nullptr;
-
+    // LFO
+    std::atomic<float>* lfoTypeParameter = nullptr;
+    std::atomic<float>* lfoRateParameter = nullptr;
 };

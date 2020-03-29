@@ -24,7 +24,7 @@ public:
         context = zmq::context_t(1);
         receiver = new zmq::socket_t(context, ZMQ_REQ);
         receiver->connect("tcp://localhost:12346");
-        DBG("Init zero done");
+        //DBG("Init zero done");
     }
 
     double recMsg()
@@ -52,8 +52,8 @@ public:
         double speed = std::stod(rx_str);
 
         // log
-        DBG(rx_str);
-        DBG(speed);
+        //DBG(rx_str);
+        //DBG(speed);
         return speed*7 + 55.0;
     }
 

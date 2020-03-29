@@ -25,26 +25,18 @@ public:
 
     //==========================================
 
-    void setEnvel(std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
+    void setOscType(std::atomic<float>* selection, std::atomic<float>* level1)
     {
-        env1.setAttack(double(*attack));
-        env1.setDecay(double(*decay));
-        env1.setSustain(double(*sustain));
-        env1.setRelease(double(*release));
+        theWave = int(*selection);
+        level_osc = double(*level1);
     }
+
 
     //==========================================
 
     void setFrequency(double frequency)
     {
         frequency_zmq = frequency;
-    }
-
-    //==========================================
-
-    void setOscType(std::atomic<float>* selection)
-    {
-        theWave = *selection;
     }
 
     //==========================================
@@ -72,10 +64,82 @@ public:
 
     //==========================================
 
-    void setFilter(std::atomic<float>* cutoff, std::atomic<float>* resonance)
+    void setEnvel(std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
     {
-        lo_cutoff = double(*cutoff);
-        lo_res = double(*resonance);
+        env1.setAttack(double(*attack));
+        env1.setDecay(double(*decay));
+        env1.setSustain(double(*sustain));
+        env1.setRelease(double(*release));
+    }
+
+    //==========================================
+
+    double getEnvel()
+    {
+        return env1.adsr(getOscType(), 1);
+    }
+
+    //==========================================
+
+    void setFilter(std::atomic<float>* selection, std::atomic<float>* cutoff1, std::atomic<float>* resonance1)
+    {
+        filterChoice = int(*selection);
+        cutoff = double(*cutoff1);
+        resonance = double(*resonance1);
+    }
+
+    //==========================================
+
+    double getFilter()
+    {
+        if (filterChoice == 0)
+        {
+            return filter1.lores(getEnvel(), cutoff + (cutoff/2) * getLfo(), resonance);
+        }
+        else if (filterChoice == 1)
+        {
+            return filter1.hires(getEnvel(), cutoff + (cutoff / 2) *getLfo(), resonance);
+        }
+        else if (filterChoice == 2)
+        {
+            return filter1.bandpass(getEnvel(), cutoff + (cutoff / 2) * getLfo(), resonance);
+        }
+        else
+        {
+            DBG("ERROR FILTERTYPE");
+            return filter1.lores(getEnvel(), cutoff + (cutoff / 2) * getLfo(), resonance);
+        }
+    }
+
+    //==========================================
+
+    void setLfo(std::atomic<float>* selection, std::atomic<float>* lforate1)
+    {
+        lfoChoice = int(*selection);
+        lfoRate = double(*lforate1);
+    }
+
+    //==========================================
+
+    double getLfo()
+    {
+        if (lfoChoice == 0)
+        {
+            return lfo1.sinewave(lfoRate);
+        }
+        else if (lfoChoice == 1)
+        {
+            return lfo1.square(lfoRate);
+        }
+        else if (lfoChoice == 2)
+        {
+            return lfo1.saw(lfoRate);
+        }
+        else
+        {
+            DBG("ERROR LFOTYPE");
+            return lfo1.sinewave(lfoRate);
+        }
     }
 
     //==========================================
@@ -122,15 +186,13 @@ public:
        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            //env for my wavetable
-            double theSound = env1.adsr(getOscType(), 1); // env1.trigger); //TODO *level;
-            //filter
-            double filteredSound = filter1.lores(theSound, lo_cutoff, lo_res); // lo_cutoff, lo_res);
+            // do audio stuff
+            double current_sample = getFilter() * level_osc;
 
-
+            // put on each channel
             for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
             {
-                outputBuffer.addSample(channel, startSample, filteredSound);
+                outputBuffer.addSample(channel, startSample, current_sample);
             }
             ++startSample;
         }
@@ -140,12 +202,21 @@ public:
 
 private:
     double level;
+    double level_osc;
     double frequency;
     double frequency_zmq;
-    double lo_cutoff;
-    double lo_res;
+    //filter
+    int filterChoice;
+    double cutoff;
+    double resonance;
+    //osc
     int theWave;
+    //lfo
+    int lfoChoice;
+    double lfoRate;
+
     maxiOsc osc1;
+    maxiOsc lfo1;
     maxiEnv env1;
     maxiFilter filter1;
 };

@@ -13,13 +13,14 @@
 
 //==============================================================================
 SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFrameworkAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), valueTreeState(vts), oscGUI(p, vts), envGUI(p, vts), filterGUI(p, vts)
+    : AudioProcessorEditor (&p), valueTreeState(vts), oscGUI(p, vts), envGUI(p, vts), filterGUI(p, vts), lfoGUI(p, vts)
 {
-    setSize(600, 200);
+    setSize(800, 200);
 
     addAndMakeVisible(&oscGUI);
     addAndMakeVisible(&envGUI);
     addAndMakeVisible(&filterGUI);
+    addAndMakeVisible(&lfoGUI);
 }
 
 SynthFrameworkAudioProcessorEditor::~SynthFrameworkAudioProcessorEditor()
@@ -44,4 +45,5 @@ void SynthFrameworkAudioProcessorEditor::resized()
     oscGUI.setBounds(r.removeFromLeft(componentWidth).removeFromTop(componentHeight));
     envGUI.setBounds(r.removeFromLeft(componentWidth).removeFromTop(componentHeight));
     filterGUI.setBounds(r.removeFromLeft(componentWidth).removeFromTop(componentHeight));
+    lfoGUI.setBounds(r.removeFromLeft(componentWidth).removeFromTop(componentHeight));
 }

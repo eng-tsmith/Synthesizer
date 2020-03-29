@@ -45,8 +45,10 @@
       <FILE id="mgIWK7" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       <FILE id="VSHOzO" name="Envelope.cpp" compile="1" resource="0" file="Source/Envelope.cpp"/>
       <FILE id="rX1w1j" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
-      <FILE id="FMGhJJ" name="LowPass.cpp" compile="1" resource="0" file="Source/LowPass.cpp"/>
-      <FILE id="zxzGbD" name="LowPass.h" compile="0" resource="0" file="Source/LowPass.h"/>
+      <FILE id="sAAZYz" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
+      <FILE id="lqHaR0" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
+      <FILE id="unJ5LK" name="Lfo.cpp" compile="1" resource="0" file="Source/Lfo.cpp"/>
+      <FILE id="g5sxxW" name="Lfo.h" compile="0" resource="0" file="Source/Lfo.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

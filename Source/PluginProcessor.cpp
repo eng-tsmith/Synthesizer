@@ -49,19 +49,39 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
                                                 1.0f),           // default value
             std::make_unique<AudioParameterFloat>("wavetype",
                                                   "WaveType",
-                                                   0.0f,
-                                                   2.0f,
+                                                   0,
+                                                   2,
                                                    0),
-            std::make_unique<AudioParameterFloat>("cutoff",
-                                                  "CutOff",
-                                                   1.0f,
-                                                   1000.0f,
+            std::make_unique<AudioParameterFloat>("levelosc",
+                                                  "LevelOSC",
+                                                   0,
+                                                   1,
+                                                   0.8),
+            std::make_unique<AudioParameterFloat>("filtertype",
+                                                  "FilterType",
+                                                   0,
+                                                   2,
+                                                   0),
+            std::make_unique<AudioParameterFloat>("filtercutoff",
+                                                  "FilterCutOff",
+                                                   20,
+                                                   5000,
                                                    1000),
-            std::make_unique<AudioParameterFloat>("resonance",
-                                                  "Resonance",
-                                                   1.0f,
-                                                   5.0f,
-                                                   1.0f),
+            std::make_unique<AudioParameterFloat>("filterresonance",
+                                                  "FilterResonance",
+                                                   1,
+                                                   5,
+                                                   1),
+            std::make_unique<AudioParameterFloat>("lfotype",
+                                                  "LFOType",
+                                                   0,
+                                                   2,
+                                                   0),
+            std::make_unique<AudioParameterFloat>("lforate",
+                                                  "LFORate",
+                                                   1,
+                                                   200,
+                                                   5),
         })
 {
     // init Voices
@@ -81,15 +101,22 @@ parameters(*this, nullptr, Identifier("MyNiceSynth"),
     mySynth.clearSounds();
     mySynth.addSound(new SynthSound());
 
-    //init params
+    // init params
+    // env
     attackTimeParameter = parameters.getRawParameterValue("attack");
     decayTimeParameter = parameters.getRawParameterValue("decay");
     sustainTimeParameter = parameters.getRawParameterValue("sustain");
     releaseTimeParameter = parameters.getRawParameterValue("release");
+    // osc
     waveTypeParameter = parameters.getRawParameterValue("wavetype");
-    cutOffParameter = parameters.getRawParameterValue("cutoff");
-    resonanceParameter = parameters.getRawParameterValue("resonance");
-    //frequencyParameter = parameters.getRawParameterValue("frequency");
+    levelOSCParameter = parameters.getRawParameterValue("levelosc");
+    // filter
+    filterTypeParameter = parameters.getRawParameterValue("filterType");
+    cutOffParameter = parameters.getRawParameterValue("filtercutoff");
+    resonanceParameter = parameters.getRawParameterValue("filterresonance");
+    // lfo
+    lfoTypeParameter = parameters.getRawParameterValue("lfotype");;
+    lfoRateParameter = parameters.getRawParameterValue("lforate");;
 
 }
 
@@ -167,6 +194,24 @@ void SynthFrameworkAudioProcessor::prepareToPlay (double sampleRate, int samples
     ignoreUnused(samplesPerBlock);
     lastSampleRate = sampleRate;
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
+
+    /*// init freq  TODO is this bug fix? init hipass seems to fix it?
+    for (int i = 0; i < mySynth.getNumVoices(); i++)
+    {
+        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
+        {          
+            myVoice->setOscType(parameters.getRawParameterValue("wavetype"));
+            myVoice->setFrequency(0.0);
+
+            myVoice->setEnvel(parameters.getRawParameterValue("attack"),
+                            parameters.getRawParameterValue("decay"),
+                            parameters.getRawParameterValue("sustain"),
+                            parameters.getRawParameterValue("release"));
+            myVoice->setFilter(parameters.getRawParameterValue("filtertype"),
+                               parameters.getRawParameterValue("filtercutoff"),
+                               parameters.getRawParameterValue("filterresonance"));
+        }
+    }*/
 }
 
 void SynthFrameworkAudioProcessor::releaseResources()
@@ -227,27 +272,24 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         // ..do something to the data...
     }
 
-    // update tree with freq
-    //frequencyParameter = myZero.recMsg();
-
-
     // read tree params and send to myVoice
     for (int i = 0; i < mySynth.getNumVoices(); i++)
     {
         if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
         {
-            //env
-           myVoice->setEnvel(parameters.getRawParameterValue("attack"), 
-                             parameters.getRawParameterValue("decay"), 
-                             parameters.getRawParameterValue("sustain"), 
-                             parameters.getRawParameterValue("release"));
+            myVoice->setOscType(parameters.getRawParameterValue("wavetype"),
+                                parameters.getRawParameterValue("levelosc"));
+            myVoice->setFrequency(myZero.recMsg());
 
-           myVoice->setFrequency(myZero.recMsg());
-
-           myVoice->setOscType(parameters.getRawParameterValue("wavetype"));
-
-           myVoice->setFilter(parameters.getRawParameterValue("cutoff"),
-                              parameters.getRawParameterValue("resonance"));
+            myVoice->setEnvel(parameters.getRawParameterValue("attack"), 
+                              parameters.getRawParameterValue("decay"), 
+                              parameters.getRawParameterValue("sustain"), 
+                              parameters.getRawParameterValue("release"));                  
+            myVoice->setFilter(parameters.getRawParameterValue("filtertype"),
+                               parameters.getRawParameterValue("filtercutoff"),
+                               parameters.getRawParameterValue("filterresonance"));
+            myVoice->setLfo(parameters.getRawParameterValue("lfotype"),
+                            parameters.getRawParameterValue("lforate"));
         }
     }
 
